@@ -132,3 +132,11 @@ Website icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 
 This project is licensed under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+
+## Financial Support
+
+This work has been funded by *Land Tirol*.
+
+Project: *DigiSchutz*
+
+<img src="/land-tirol.png" width="100px">

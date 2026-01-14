@@ -75,3 +75,11 @@ types of mass-movement phenomena. Types present are:
 Contributions are always welcome! 😊
 Please refer to the [**Contribution Guidelines**](./CONTRIBUTING.md) for more
 details on how to setup your development environment.
+
+## Financial Support
+
+This work has been funded by *Land Tirol*.
+
+Project: *DigiSchutz*
+
+<img src="./docs/public/land-tirol.png" width="100px">
