@@ -1,3 +1,4 @@
+# Script to generate some overview plots
 from pathlib import Path
 
 import contextily as cx
@@ -18,79 +19,39 @@ with Session() as session:
         "SELECT * FROM landslides_view", session.bind, geom_col="geom"
     )
 
-## Plotting the landslide data
-
-landslide_view_3857 = landslide_view.to_crs(
-    epsg=3857
-)  # Web Mercator for contextily
+# Plotting the landslide data
 fig, ax = plt.subplots(figsize=(10, 10))
-landslide_view_3857.plot(
+landslide_view.plot(
     ax=ax,
     column="classification_name",
     legend=True,
-    markersize=5,
-    cmap="Set1",
-    alpha=0.8,
+    alpha=0.75,
+    markersize=1.5,
+    cmap="tab10",
 )
-cx.add_basemap(ax, source=cx.providers.OpenStreetMap.Mapnik, zoom="auto")
-ax.set_title("Landslide Classifications")
+cx.add_basemap(
+    ax,
+    crs=landslide_view.crs,
+    source=cx.providers.CartoDB.PositronNoLabels,
+    attribution_size=6,
+)
 ax.set_axis_off()
-plt.title("Landslide Classifications")
-# dpi affects the (rasterized) basemap
-fig.savefig(PLOTS_DIR / "classification_map.svg", dpi=300, bbox_inches="tight")
+fig.savefig(PLOTS_DIR / "classification-map.png", dpi=150, bbox_inches="tight")
 
-
-## Plot the number of events by month
+# Plot the number of events by year
 fig, ax = plt.subplots(figsize=(10, 6))
 landslide_view["event_date"] = gpd.pd.to_datetime(landslide_view["date"])
-landslide_view["event_month"] = landslide_view["event_date"].dt.month
-month_counts = landslide_view["event_month"].value_counts().sort_index()
-month_counts.plot(ax=ax, kind="bar", color="lightgreen", fontsize=6)
-
-plt.title("Number of events by Month")
-plt.xticks(rotation=0)
-plt.xlabel("Month")
-plt.ylabel("Number of events")
-
-# Add counts on top of bars
-for i, value in enumerate(month_counts):
-    plt.text(
-        i,
-        value + 0.5,
-        str(value),
-        ha="center",
-        va="bottom",
-        fontsize=8,
-        fontweight="bold",
-    )
-fig.savefig(PLOTS_DIR / "events_per_month.svg", bbox_inches="tight")
-
-## Plot the number of events by year
-fig, ax = plt.subplots(figsize=(10, 6))
 landslide_view["event_year"] = landslide_view["event_date"].dt.year
-year_counts = landslide_view["event_year"].value_counts().sort_index()
-# remove years that are less than 50 events
-year_counts = year_counts[year_counts >= 50]
-year_counts.plot(ax=ax, kind="bar", color="salmon", fontsize=6)
-plt.title("Number of events by Year (>=50)")
-plt.xticks(rotation=90)
-plt.xlabel("Year")
-plt.ylabel("Number of events")
-# Add counts on top of bars
-for i, value in enumerate(year_counts):
-    plt.text(
-        i,
-        value + 0.5,
-        str(value),
-        ha="center",
-        va="bottom",
-        fontsize=5,
-        fontweight="bold",
-    )
-fig.savefig(PLOTS_DIR / "events_per_year.svg", bbox_inches="tight")
 
-## Pie chart of landslide classifications with percentage labels
-# Data
+year_counts = landslide_view["event_year"].value_counts().sort_index()
+year_counts = year_counts[year_counts.index >= 1900]
+year_counts.plot(ax=ax, kind="line", color="#6F60A1", marker="o", markersize=3)
+
+plt.ylabel("Number of events")
+plt.xlabel(None)
+fig.savefig(PLOTS_DIR / "years.svg", bbox_inches="tight")
+
+# Pie chart of landslide classifications with percentage labels
 classification_counts = landslide_view["classification_name"].value_counts()
 total = classification_counts.sum()
 
@@ -107,6 +68,7 @@ wedges, texts, autotexts = ax.pie(
     startangle=-20,
     pctdistance=0.8,
     explode=explode,
+    colors=plt.cm.tab10.colors,
 )
 
 # --- Annotation logic ---
@@ -161,32 +123,5 @@ for autotext in autotexts:
     autotext.set_weight("bold")
 
 ax.axis("equal")
-plt.title("Proportion of Landslide Classifications")
 plt.tight_layout()
-
-fig.savefig(PLOTS_DIR / "classification_piechart.svg", bbox_inches="tight")
-
-# Plot the number of events per month in a bar plot with different colors
-#  for classifications
-fig, ax = plt.subplots(figsize=(12, 8))
-
-pivot = (
-    landslide_view.groupby(["event_month", "classification_name"])
-    .size()
-    .unstack(fill_value=0)
-    .sort_index()
-)
-
-pivot.plot(kind="bar", stacked=True, ax=ax, figsize=(12, 8), colormap="Set1")
-
-ax.set_title("Number of Events per Month by Classification")
-ax.set_xlabel("Month")
-ax.set_ylabel("Number of Events")
-ax.legend(title="Classification", bbox_to_anchor=(1.05, 1), loc="upper left")
-# Rotate month numbers
-plt.xticks(rotation=0)
-plt.tight_layout()
-fig.savefig(
-    PLOTS_DIR / "events_per_month_by_classification.svg",
-    bbox_inches="tight",
-)
+fig.savefig(PLOTS_DIR / "classification-pie.svg", bbox_inches="tight")
