@@ -110,19 +110,21 @@ To set up the data base, please refer to the
 
 The inventory incorporates data from the following sources:
 
-| Source Name                                                                                                                             |         License         |
-|-----------------------------------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| [GeoSphere](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |        [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)       |
-| [Global Fatal Landslides](https://www.arcgis.com/home/item.html?id=7c9397b261aa436ebfbc41396bd96d06)                                    | [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/) |
-| [NASA COOLR](https://maps.nccs.nasa.gov/arcgis/apps/MapAndAppGallery/index.html?appid=574f26408683485799d02e857e5d9521)                 |     Custom License (provided in the repo)     |
-| [WLV](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) |     [No Limitations](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527)      |
-| [Land Kärnten (Carinthia)](https://www.data.gv.at/datasets/70b85305-d3d1-487a-beff-75fa6d712c28?locale=de)                              |         [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Source Name                                                                                                                             |                                                                      License                                                                       | Last Updated |
+|-----------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|
+| [GeoSphere](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              | 6 Feb 2025  |
+| [Global Fatal Landslides](https://www.arcgis.com/home/item.html?id=7c9397b261aa436ebfbc41396bd96d06)                                    |                       [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/)                        | 9 Sept 2019  |
+| [NASA COOLR](https://maps.nccs.nasa.gov/arcgis/apps/MapAndAppGallery/index.html?appid=574f26408683485799d02e857e5d9521)                 |                                                       Custom License (provided in the repo)                                                        |   unknown    |
+| [WLV](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | [No Limitations](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | 20 Jun 2025  |
+| [Land Kärnten (Carinthia)](https://www.data.gv.at/datasets/70b85305-d3d1-487a-beff-75fa6d712c28?locale=de)                              |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              |  6 Dec 2025  |
 
-Each record in the data base is linked to its original source to ensure clear
-data provenance and proper attribution.
+Each data source listed above contributes records to the inventory while
+maintaining full traceability to the original source. The *Last Updated* column
+indicates the most recent modification date for each source, helping users 
+assess data recency.
 
-We are continuously working on adding more data sources to enhance the
-comprehensiveness of the inventory.
+Additional sources are evaluated continuously to expand the inventory's 
+coverage.
 
 ## Attributions
 
