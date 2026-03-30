@@ -5,8 +5,7 @@ outline: deep
 # Schema
 
 To work with the data base, it helps to understand its public schema. The 
-`landslides` data base follows a simple, well‑structured layout. A screenshot
-is shown below: 
+`landslides` data base follows a simple layout. A screenshot is shown below: 
 
 <figure>
   <img
@@ -31,7 +30,7 @@ Let's break down each table and have a closer look.
 | `landslides`      | Mass movement event records (e.g., rockfalls, debris flows, ...) with date and point geometry. |
 | `classification`  | Lookup table with classification labels used by the `landslides` table.                        |
 | `sources`         | Metadata about original data sources linked to event records.                                  |
-
+| `version`         | Stores the Python Package version used to import the data.                                     |
 
 ### alembic_version
 
