@@ -1,3 +1,18 @@
+## Version: `0.1.5`
+
+### 🌟 Features
+
+- Plotting script to generate overview plots of the events (e.g., map,
+    events per year and ratio of classifications)
+- Within the documentation the most recent modification for each data source is
+    given, for easier assessment of data recency.
+
+### 🛠 Dev changes
+
+- Updated `alembic` (encountered an issue with the `script_location` from 
+    `alembic.ini`)
+- Added a `Version` table to save the package version used to import the data
+
 ## Version: `0.1.4`
 
 ### 🌟 Features
