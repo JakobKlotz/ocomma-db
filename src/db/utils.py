@@ -1,4 +1,5 @@
 import json
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Dict
 
@@ -7,7 +8,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.models import Sources
+from db.models import Sources, Version
 from db.settings import DB_URI
 
 
@@ -85,3 +86,13 @@ def create_source_from_metadata(metadata: Dict[str, Any]) -> Sources:
         description=metadata.get("description"),  # nullable
         doi=metadata.get("doi"),  # nullable
     )
+
+
+def import_version() -> None:
+    """Add the current package version to a dedicated table."""
+    __version__ = version("landslides-db")
+
+    Session = create_db_session()  # noqa: N806
+    with Session() as session:
+        session.add(Version(imported_with_version=__version__))
+        session.commit()
