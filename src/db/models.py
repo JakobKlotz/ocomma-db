@@ -72,3 +72,10 @@ class Sources(Base):
     landslides: Mapped[List["Landslides"]] = relationship(
         back_populates="source"
     )
+
+
+class Version(Base):
+    __tablename__ = "version"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    imported_with_version: Mapped[str]

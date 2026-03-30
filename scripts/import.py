@@ -4,6 +4,7 @@ from pathlib import Path
 import typer
 
 from db import WLV, GeoSphere, GlobalFatalLandslides, LandKaernten, Nasa
+from db.utils import import_version
 
 in_base_path, out_base_path = (
     Path("./data/raw"),
@@ -30,6 +31,9 @@ def import_data(dump_layers: bool = False):
         dump_layers (bool, optional): Dump each processed data source as an
             individual file. Defaults to False.
     """
+    # Add the current package version to a dedicated table
+    import_version()
+
     for proc_class, rel_path in processors:
         in_path = in_base_path / rel_path
         proc = proc_class(file_path=in_path)

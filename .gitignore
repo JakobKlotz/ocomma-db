@@ -129,3 +129,6 @@ supplements/
 node_modules/
 docs/.vitepress/cache
 docs/.vitepress/dist
+
+# Analysis output
+plots/
