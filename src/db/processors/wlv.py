@@ -116,12 +116,20 @@ class WLV(BaseProcessor):
         )
 
         # Subset & assign as attribute
-        self.data = data[["classification", "validFrom", "geometry"]]
+        self.data = data[
+            [
+                "classification",
+                "validFrom",
+                "geometry",
+                "nameOfEvent",
+            ]
+        ]
 
     def import_to_db(self, file_dump: str | None = None):
         column_map = {
             "classification": "classification",
             "date": "validFrom",
+            "original_classification": "nameOfEvent",
         }
 
         self._import_to_db(
