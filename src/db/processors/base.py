@@ -137,7 +137,9 @@ class BaseProcessor(ABC):
                     "report_source": row.get(column_map.get("report_source")),
                     "report_url": row.get(column_map.get("report_url")),
                     # not nullable
-                    "original_classification": row["original_classification"],
+                    "original_classification": row[
+                        column_map["original_classification"]
+                    ],
                     "geom": row["geom_wkt"],
                     "classification_id": classification_map.get(
                         row.get(column_map.get("classification"))
@@ -147,10 +149,8 @@ class BaseProcessor(ABC):
                 axis=1,
             ).tolist()
 
-            stmt = insert(Landslides).values(landslide_records)
-
             try:
-                session.execute(stmt)
+                session.execute(insert(Landslides), landslide_records)
                 session.commit()
                 print(
                     f"Successfully imported {len(landslide_records)} "
