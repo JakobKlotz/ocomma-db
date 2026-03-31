@@ -24,7 +24,9 @@ class WLV(BaseProcessor):
             "Oberflächenabfluss",
         }
         super().__init__(
-            file_path=file_path, dataset_name="Wildbach- und Lawinenverbauung"
+            file_path=file_path,
+            dataset_name="Wildbach- und Lawinenverbauung",
+            layer="WLV_Ereignisse_INSPIRE",
         )
 
     def _build_categories(self, data: gpd.GeoDataFrame) -> gpd.GeoDataFrame:

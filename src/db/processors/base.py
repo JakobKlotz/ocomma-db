@@ -19,11 +19,12 @@ from db.utils import (
 class BaseProcessor(ABC):
     """Abstract base class for data processors."""
 
-    def __init__(self, *, file_path: str | Path, dataset_name: str):
+    def __init__(self, *, file_path: str | Path, dataset_name: str, **kwargs):
         self.target_crs = TARGET_CRS
         self.austria = AUSTRIA
         self.file_path = file_path
         self.dataset_name = dataset_name
+        self.kwargs = kwargs
         self.data = self.read_file()
         self.metadata = read_metadata(file_path=self.file_path)
 
@@ -31,9 +32,9 @@ class BaseProcessor(ABC):
         # Ensure that points are within Austria
         # CRS mis-match between the two files is handled internally by
         # geopandas
-        return gpd.read_file(self.file_path, mask=self.austria).to_crs(
-            crs=self.target_crs
-        )
+        return gpd.read_file(
+            self.file_path, mask=self.austria, **self.kwargs
+        ).to_crs(crs=self.target_crs)
 
     @abstractmethod
     def run(self):
