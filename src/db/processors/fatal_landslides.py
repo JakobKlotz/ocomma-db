@@ -33,7 +33,7 @@ class GlobalFatalLandslides(BaseProcessor):
         ]
         # Combination represents the original classification, to be imported
         self.data["original_classification"] = (
-            self.data["Report_1"] + "Trigger: " + self.data["Trigger"]
+            self.data["Report_1"] + " | Trigger: " + self.data["Trigger"]
         )
         self.data = self.data.sort_values("Date").reset_index(drop=True)
 

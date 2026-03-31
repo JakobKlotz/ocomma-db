@@ -32,7 +32,7 @@ class Nasa(BaseProcessor):
         self.data = self.data[columns_to_keep]
         # form a single string
         self.data["original_classification"] = (
-            self.data["landslide_"] + "Trigger: " + self.data["landslide1"]
+            self.data["landslide_"] + " | Trigger: " + self.data["landslide1"]
         )
 
         # Map categories; GeoSphere classifications are used as basis:

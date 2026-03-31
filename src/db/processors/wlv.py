@@ -86,6 +86,7 @@ class WLV(BaseProcessor):
         # Remove all "unbekannt" dates
         data = data[data["validFrom"] != "unbekannt"]
         # validFrom to date (coerce - historical dates are in there)
+        # TODO: rewrite
         data["validFrom"] = pd.to_datetime(
             data["validFrom"], errors="coerce"
         ).dt.date
