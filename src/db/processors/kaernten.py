@@ -29,6 +29,7 @@ class LandKaernten(BaseProcessor):
                 f"Not all geometries in data set {self.dataset_name} given"
             )
 
+        # TODO rewrite
         self.data["validFrom"] = pd.to_datetime(
             self.data["validFrom"], errors="coerce"
         ).dt.date
@@ -134,7 +135,7 @@ class LandKaernten(BaseProcessor):
             "classification": "classification",
             "date": "validFrom",
             # import original hazard labels
-            "report": "QualitativeValue",
+            "original_classification": "QualitativeValue",
         }
         self._import_to_db(
             data_to_import=self.data,
