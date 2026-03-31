@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
 
 from geoalchemy2 import Geometry
@@ -20,10 +20,11 @@ class Landslides(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    date: Mapped[date]
+    date: Mapped[datetime]
     report: Mapped[Optional[str]]
     report_source: Mapped[Optional[str]]
     report_url: Mapped[Optional[str]]
+    original_classification: Mapped[str]
 
     # Point geom must always be present, if Polygon given, calculate the
     # centroid
