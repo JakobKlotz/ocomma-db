@@ -104,6 +104,9 @@ class GeoSphere(BaseProcessor):
             "classification": "classification",
             "date": "validFrom",
             # report fields are None (no appropriate field)
+            # generally, from each source the original classifications are
+            # preserved
+            "original_classification": "classification",
         }
         self._import_to_db(
             data_to_import=data_to_import,
