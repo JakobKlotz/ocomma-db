@@ -59,8 +59,13 @@ class BaseProcessor(ABC):
         Args:
             data_to_import (gpd.GeoDataFrame): Data to import.
             column_map (dict): Dictionary mapping DataFrame columns
-                to database columns. Expected keys: 'date', 'classification',
-                'report', 'report_source', 'report_url'.
+                to database columns. Expected keys:
+                - date
+                - classification
+                - report
+                - report_source
+                - report_url
+                - original_classification
             file_dump (str | None): Optional path to dump the data for
                 inspection.
             check_duplicates (bool): If True, check for duplicates against
@@ -123,13 +128,16 @@ class BaseProcessor(ABC):
             # must be a list of dicts for the insert statement
             landslide_records = import_data.apply(
                 lambda row: {
+                    # TODO: check if row[column_map["date"]] sufficient
                     "date": row[column_map["date"]].date()
                     if hasattr(row[column_map["date"]], "date")
                     else row[column_map["date"]],
-                    # all nullable
+                    # nullable
                     "report": row.get(column_map.get("report")),
                     "report_source": row.get(column_map.get("report_source")),
                     "report_url": row.get(column_map.get("report_url")),
+                    # not nullable
+                    "original_classification": row["original_classification"],
                     "geom": row["geom_wkt"],
                     "classification_id": classification_map.get(
                         row.get(column_map.get("classification"))
