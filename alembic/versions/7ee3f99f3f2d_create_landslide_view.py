@@ -1,8 +1,8 @@
-"""create lanslide view
+"""create landslide view
 
-Revision ID: 1fc1738312c6
-Revises: 5854ae4edfbb
-Create Date: 2025-10-22 08:38:41.203164
+Revision ID: 7ee3f99f3f2d
+Revises: 54f61396c023
+Create Date: 2026-03-31 16:53:31.934240
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1fc1738312c6'
-down_revision: Union[str, Sequence[str], None] = '5854ae4edfbb'
+revision: str = '7ee3f99f3f2d'
+down_revision: Union[str, Sequence[str], None] = '54f61396c023'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -27,6 +27,7 @@ def upgrade() -> None:
         l.report,
         l.report_source,
         l.report_url,
+        l.original_classification,
         c.name AS classification_name,
         l.source_id,
         s.name AS source_name,

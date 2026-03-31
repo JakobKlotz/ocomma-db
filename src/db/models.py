@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from typing import List, Optional
 
 from geoalchemy2 import Geometry
@@ -20,7 +20,7 @@ class Landslides(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    date: Mapped[datetime]
+    date: Mapped[date]
     report: Mapped[Optional[str]]
     report_source: Mapped[Optional[str]]
     report_url: Mapped[Optional[str]]
