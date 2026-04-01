@@ -60,7 +60,7 @@ class BaseProcessor(ABC):
             data_to_import (gpd.GeoDataFrame): Data to import.
             column_map (dict): Dictionary mapping DataFrame columns
                 to database columns. Expected keys:
-                - date
+                - datetime
                 - classification
                 - report
                 - report_source
@@ -99,9 +99,7 @@ class BaseProcessor(ABC):
                 import_data["duplicated"] = import_data.apply(
                     lambda row: is_duplicated(
                         session=session,
-                        landslide_date=row[column_map["date"]].date()
-                        if hasattr(row[column_map["date"]], "date")
-                        else row[column_map["date"]],
+                        landslide_datetime=row[column_map["datetime"]],
                         landslide_geom=row["geom_wkt"],
                     ),
                     axis=1,
@@ -128,10 +126,7 @@ class BaseProcessor(ABC):
             # must be a list of dicts for the insert statement
             landslide_records = import_data.apply(
                 lambda row: {
-                    # TODO: check if row[column_map["date"]] sufficient
-                    "date": row[column_map["date"]].date()
-                    if hasattr(row[column_map["date"]], "date")
-                    else row[column_map["date"]],
+                    "datetime": row[column_map["datetime"]],
                     # nullable
                     "report": row.get(column_map.get("report")),
                     "report_source": row.get(column_map.get("report_source")),
@@ -140,7 +135,7 @@ class BaseProcessor(ABC):
                     "original_classification": row[
                         column_map["original_classification"]
                     ],
-                    "geom": row["geom_wkt"],
+                    "geometry": row["geom_wkt"],
                     "classification_id": classification_map.get(
                         row.get(column_map.get("classification"))
                     ),

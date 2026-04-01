@@ -86,10 +86,7 @@ class WLV(BaseProcessor):
         # Remove all "unbekannt" dates
         data = data[data["validFrom"] != "unbekannt"]
         # validFrom to date (coerce - historical dates are in there)
-        # TODO: rewrite
-        data["validFrom"] = pd.to_datetime(
-            data["validFrom"], errors="coerce"
-        ).dt.date
+        data["validFrom"] = pd.to_datetime(data["validFrom"], errors="coerce")
         # Remove all entries with no date
         data = data[~data["validFrom"].isna()]
 
@@ -129,7 +126,7 @@ class WLV(BaseProcessor):
     def import_to_db(self, file_dump: str | None = None):
         column_map = {
             "classification": "classification",
-            "date": "validFrom",
+            "datetime": "validFrom",
             "original_classification": "nameOfEvent",
         }
 

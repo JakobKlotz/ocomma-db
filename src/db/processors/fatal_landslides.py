@@ -93,7 +93,7 @@ class GlobalFatalLandslides(BaseProcessor):
         """Import to PostGIS database."""
         column_map = {
             "classification": "classification",
-            "date": "date",
+            "datetime": "date",
             "description": "description",
             "report": "Report_1",
             "report_url": "Source_1",

@@ -39,7 +39,7 @@ class GeoSphere(BaseProcessor):
         # validFrom to date (coerce - historical dates are in there)
         self.data["validFrom"] = pd.to_datetime(
             self.data["validFrom"], errors="coerce"
-        ).dt.date
+        )
         # Remove all entries with no date
         self.data = self.data[~self.data["validFrom"].isna()]
 
@@ -63,8 +63,10 @@ class GeoSphere(BaseProcessor):
         )
 
     def populate_classification_table(self):
-        """Populate the classification table with unique landslide
-        classifications."""
+        """
+        Populate the classification table with unique landslide
+        classifications.
+        """
         Session = create_db_session()  # noqa: N806
         with Session() as session:
             unique_classifications = set(
@@ -102,7 +104,7 @@ class GeoSphere(BaseProcessor):
 
         column_map = {
             "classification": "classification",
-            "date": "validFrom",
+            "datetime": "validFrom",
             # report fields are None (no appropriate field)
             # generally, from each source the original classifications are
             # preserved
