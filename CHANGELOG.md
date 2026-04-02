@@ -1,3 +1,26 @@
+## Version: `0.2.0`
+
+### 🌟 Features
+
+- Preserve original classification: The raw source classification label
+    is now retained in a dedicated `original_classification` field alongside
+    the harmonized classification.
+- Refreshed the WLV data
+
+### ❌ Breaking changes
+
+- **Renamed `Landslides.date` to `Landslides.datetime`:** Column type
+    changed from `DATE` to `DATETIME`. Update existing queries accordingly.
+- **Renamed `Landslides.geom` to `Landslides.geometry`** Update existing
+    queries accordingly.
+
+### 📄 Documentation
+
+- GeoSphere Austria positional uncertainty (50–2000 m) documented in the
+    About page limitations.
+- Timestamps are assumed to be Austrian local time (CET/CEST); documented
+    in the schema column overview.
+
 ## Version: `0.1.5`
 
 ### 🌟 Features
