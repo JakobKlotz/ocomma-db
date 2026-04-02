@@ -90,7 +90,8 @@ for an overview.
 
 | Field             | Nullable | Description                                          |
 |-------------------|----------|------------------------------------------------------|
-| date              | No       | Event date                                           |
+| date              | No       | Event date (assumed Austrian local time, CET/CEST;   |
+|                   |          | no timezone conversion applied)                      |
 | geom              | No       | Point geometry in **EPSG:32632**                     |
 | source_id         | No       | Foreign key to the `sources` table                   |
 | report            | Yes      | Optional report describing the event                 |

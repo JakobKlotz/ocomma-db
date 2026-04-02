@@ -59,7 +59,9 @@ exploratory analysis, statistical modeling and the development of new methods.
   and omissions from its sources. Be aware, that data quality can verify.
 - **Positional uncertainty:** Point geometries can be imprecise. Positional 
   uncertainty is generally not reported by the sources and can not be reliably 
-  estimated. Do not use for high-accuracy applications.
+  estimated. Where reported, imprecision can range significantly, GeoSphere 
+  Austria, for example, documents a positional uncertainty of 50–2000 m.
+  In general, do not use this database for high-accuracy applications.
 - **Imperfect duplicate detection:** The automated check helps reduce 
   redundancy but is not exhaustive. Some duplicates may remain, especially 
   considering imprecision regarding point geometries.
@@ -112,7 +114,7 @@ The inventory incorporates data from the following sources:
 
 | Source Name                                                                                                                             |                                                                      License                                                                       | Last Updated |
 |-----------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|
-| [GeoSphere](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              | 6 Feb 2025  |
+| [GeoSphere Austria](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              | 6 Feb 2025  |
 | [Global Fatal Landslides](https://www.arcgis.com/home/item.html?id=7c9397b261aa436ebfbc41396bd96d06)                                    |                       [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/)                        | 9 Sept 2019  |
 | [NASA COOLR](https://maps.nccs.nasa.gov/arcgis/apps/MapAndAppGallery/index.html?appid=574f26408683485799d02e857e5d9521)                 |                                                       Custom License (provided in the repo)                                                        |   unknown    |
 | [WLV](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | [No Limitations](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | 20 Jun 2025  |
