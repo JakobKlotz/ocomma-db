@@ -15,7 +15,7 @@ out_file.unlink(missing_ok=True)
 Session = create_db_session()
 with Session() as session:
     landslide_view = gpd.read_postgis(
-        "SELECT * FROM landslides_view", session.bind, geom_col="geom"
+        "SELECT * FROM landslides_view", session.bind, geom_col="geometry"
     )
     landslide_view.to_file(out_file, driver="GPKG")
     print("Exported!")
