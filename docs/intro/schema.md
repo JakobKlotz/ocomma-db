@@ -12,16 +12,9 @@ To work with the data base, it helps to understand its public schema. The
     src="/schema.png" alt="Landslides View in the API preview"
     loading="lazy" width="100%" style="border-radius: 10px;"
   >
-  <figcaption>
-    The data base schema.
-  </figcaption>
 </figure>
 
-Each table is described in detail below.
-
 ## Table Description
-
-Let's break down each table and have a closer look.
 
 | Table             | Description                                                                                    |
 |-------------------|------------------------------------------------------------------------------------------------|
@@ -62,14 +55,14 @@ linked to an SRID. The spatial_ref_sys table is used to interpret that SRID.
 ### landslides
 
 The landslides table contains the mass movement events, including a event date
-(`date`) and point geometry (`geom`). All records are linked to source and 
-classification via the `source_id` and `classification_id` respectively. Find 
-the first two records below:
+with time (`datetime`) and point geometry (`geom`). All records are linked to
+source and classification via the `source_id` and `classification_id`
+respectively. Find the first two records below:
 
-| id | date       | geom              | source_id | report | report_source | report_url | classification_id |
-|----|------------|-------------------|-----------|--------|---------------|------------|-------------------|
-| 1  | 2024-11-01 | 0101000020787F... | 1         | NULL   | NULL          | NULL       | 1                 |
-| 2  | 2024-10-22 | 0101000020787F... | 1         | NULL   | NULL          | NULL       | 1                 |
+| id | datetime            | report | report_source | report_url | original_classification | geometry      | classification_id | source_id |
+|----|---------------------|--------|---------------|------------|-------------------------|---------------|-------------------|-----------|
+| 1  | 2024-11-01 00:00:00 | NULL   | NULL          | NULL       | rockfall                | 0101000020... | 5                 | 1         |
+| 2  | 2024-10-22 00:00:00 | NULL   | NULL          | NULL       | rockfall                | 0101000020... | 5                 | 1         |
 
 ::: details
 
@@ -88,16 +81,16 @@ LIMIT 2;
 Some fields are nullable whereas other must always be present, see below table
 for an overview.
 
-| Field             | Nullable | Description                                          |
-|-------------------|----------|------------------------------------------------------|
-| date              | No       | Event date (assumed Austrian local time, CET/CEST;   |
-|                   |          | no timezone conversion applied)                      |
-| geom              | No       | Point geometry in **EPSG:32632**                     |
-| source_id         | No       | Foreign key to the `sources` table                   |
-| report            | Yes      | Optional report describing the event                 |
-| report_source     | Yes      | Optional name of the report source                   |
-| report_url        | Yes      | Optional URL linking to the original report/resource |
-| classification_id | No       | Foreign key to the `classification` table            |
+| Field                   | Nullable | Description                                                                           |
+|-------------------------|----------|---------------------------------------------------------------------------------------|
+| datetime                | No       | Event datetime (assumed Austrian local time, CET/CEST;no timezone conversion applied) |
+| report                  | Yes      | Optional report describing the event                                                  |
+| report_source           | Yes      | Optional name of the report source                                                    |
+| report_url              | Yes      | Optional URL linking to the original report/resource                                  |
+| original_classification | No       | Original classification provided by the source                                        |
+| geometry                | No       | Point geometry in **EPSG:32632**                                                      |
+| classification_id       | No       | Foreign key to the `classification` table                                             |
+| source_id               | No       | Foreign key to the `sources` table                                                    |
 
 ::: info
 
@@ -105,24 +98,24 @@ Geometries are all in [EPSG:32632](https://epsg.io/32632)!
 
 :::
 
-In short, `date`, `geom` and `source_id` and `classification_id` are always
-present.
+In short, `datetime`, `geometry`, `original_classification`, `source_id` and 
+`classification_id` are always present.
 
 ::: info
 
-By default, the point geometry `geom` is returned as hex-encoded binary.
+By default, the point geometry `geometry` is returned as hex-encoded binary.
 To get the geometry as string, use the `ST_AsText` function. For example:
 
 ```sql
-SELECT id, date, ST_AsText(geom) AS wkt
+SELECT id, datetime, ST_AsText(geometry) AS wkt
 FROM public.landslides
 LIMIT 2;
 ```
 
-| id | date       | wkt                                 |
-|----|------------|-------------------------------------|
-| 1  | 2024-11-01 | POINT(748676.21304 5272749.179051)  |
-| 2  | 2024-10-22 | POINT(641802.697946 5196727.447737) |
+| id | datetime            | wkt                                 |
+|----|---------------------|-------------------------------------|
+| 1  | 2024-11-01 00:00:00 | POINT(748676.21304 5272749.179051)  |
+| 2  | 2024-10-22 00:00:00 | POINT(641802.697946 5196727.447737) |
 
 :::
 
@@ -131,15 +124,15 @@ LIMIT 2;
 With the `ST_AsEWKT` function, the SRID can be included as well.
 
 ```sql
-SELECT id, ST_AsEWKT(geom) AS ewkt
+SELECT id, ST_AsEWKT(geometry) AS ewkt
 FROM public.landslides
 LIMIT 2;
 ```
 
-| id | date       | wkt                                            |
-|----|------------|------------------------------------------------|
-| 1  | 2024-11-01 | SRID=32632;POINT(748676.21304 5272749.179051)  |
-| 2  | 2024-10-22 | SRID=32632;POINT(641802.697946 5196727.447737) |
+| id | wkt                                            |
+|----|------------------------------------------------|
+| 1  | SRID=32632;POINT(748676.21304 5272749.179051)  |
+| 2  | SRID=32632;POINT(641802.697946 5196727.447737) |
 
 :::
 
@@ -148,17 +141,17 @@ LIMIT 2;
 This table stores the classification labels referenced by the `landslides`
 table (via `classification_id`). The available values are listed below:
 
-| name                                      |
-|-------------------------------------------|
-| rockfall                                  |
-| collapse, sinkhole                        |
-| mass movement (undefined type)            |
-| gravity slide or flow                     |
-| deep seated rock slope deformation        |
+| name                               |
+|------------------------------------|
+| rockfall                           |
+| collapse, sinkhole                 |
+| mass movement (undefined type)     |
+| gravity slide or flow              |
+| deep seated rock slope deformation |
 
 Each record is classified into one of these categories. The categories itself
 were derived from the GeoSphere data set (see 
-[Data Sources](../index#data-sources) for more info).
+[Data Sources](../intro/about#data-sources) for more info).
 
 ::: details
 
