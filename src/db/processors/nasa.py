@@ -25,10 +25,15 @@ class Nasa(BaseProcessor):
             "source_lin",  # also to comply with the license
             "source_nam",  # comply with the license
             "event_date",
-            "landslide_",
+            "landslide_",  # original classification
+            "landslide1",  # trigger info
             "geometry",
         ]
         self.data = self.data[columns_to_keep]
+        # form a single string
+        self.data["original_classification"] = (
+            self.data["landslide_"] + " | Trigger: " + self.data["landslide1"]
+        )
 
         # Map categories; GeoSphere classifications are used as basis:
         # ['gravity slide or flow' 'mass movement (undefined type)' 'rockfall'
@@ -58,20 +63,18 @@ class Nasa(BaseProcessor):
 
         # Remove all events with no classification
         self.data = self.data[~self.data["classification"].isna()]
-        # convert datetime64[ns] -> python date objects
-        self.data["event_date"] = pd.to_datetime(
-            self.data["event_date"]
-        ).dt.date
+        self.data["event_date"] = pd.to_datetime(self.data["event_date"])
 
     def import_to_db(self, file_dump: str | None = None):
         """Import to PostGIS database."""
         column_map = {
             "classification": "classification",
-            "date": "event_date",
+            "datetime": "event_date",
             "description": "description",
             "report": "event_desc",
             "report_source": "source_nam",
             "report_url": "source_lin",
+            "original_classification": "original_classification",
         }
         self._import_to_db(
             data_to_import=self.data,

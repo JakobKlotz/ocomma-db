@@ -24,7 +24,9 @@ class WLV(BaseProcessor):
             "Oberflächenabfluss",
         }
         super().__init__(
-            file_path=file_path, dataset_name="Wildbach- und Lawinenverbauung"
+            file_path=file_path,
+            dataset_name="Wildbach- und Lawinenverbauung",
+            layer="WLV_Ereignisse_INSPIRE",
         )
 
     def _build_categories(self, data: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -84,9 +86,7 @@ class WLV(BaseProcessor):
         # Remove all "unbekannt" dates
         data = data[data["validFrom"] != "unbekannt"]
         # validFrom to date (coerce - historical dates are in there)
-        data["validFrom"] = pd.to_datetime(
-            data["validFrom"], errors="coerce"
-        ).dt.date
+        data["validFrom"] = pd.to_datetime(data["validFrom"], errors="coerce")
         # Remove all entries with no date
         data = data[~data["validFrom"].isna()]
 
@@ -114,12 +114,20 @@ class WLV(BaseProcessor):
         )
 
         # Subset & assign as attribute
-        self.data = data[["classification", "validFrom", "geometry"]]
+        self.data = data[
+            [
+                "classification",
+                "validFrom",
+                "geometry",
+                "nameOfEvent",
+            ]
+        ]
 
     def import_to_db(self, file_dump: str | None = None):
         column_map = {
             "classification": "classification",
-            "date": "validFrom",
+            "datetime": "validFrom",
+            "original_classification": "nameOfEvent",
         }
 
         self._import_to_db(

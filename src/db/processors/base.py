@@ -19,11 +19,12 @@ from db.utils import (
 class BaseProcessor(ABC):
     """Abstract base class for data processors."""
 
-    def __init__(self, *, file_path: str | Path, dataset_name: str):
+    def __init__(self, *, file_path: str | Path, dataset_name: str, **kwargs):
         self.target_crs = TARGET_CRS
         self.austria = AUSTRIA
         self.file_path = file_path
         self.dataset_name = dataset_name
+        self.kwargs = kwargs
         self.data = self.read_file()
         self.metadata = read_metadata(file_path=self.file_path)
 
@@ -31,9 +32,9 @@ class BaseProcessor(ABC):
         # Ensure that points are within Austria
         # CRS mis-match between the two files is handled internally by
         # geopandas
-        return gpd.read_file(self.file_path, mask=self.austria).to_crs(
-            crs=self.target_crs
-        )
+        return gpd.read_file(
+            self.file_path, mask=self.austria, **self.kwargs
+        ).to_crs(crs=self.target_crs)
 
     @abstractmethod
     def run(self):
@@ -58,8 +59,13 @@ class BaseProcessor(ABC):
         Args:
             data_to_import (gpd.GeoDataFrame): Data to import.
             column_map (dict): Dictionary mapping DataFrame columns
-                to database columns. Expected keys: 'date', 'classification',
-                'report', 'report_source', 'report_url'.
+                to database columns. Expected keys:
+                - datetime
+                - classification
+                - report
+                - report_source
+                - report_url
+                - original_classification
             file_dump (str | None): Optional path to dump the data for
                 inspection.
             check_duplicates (bool): If True, check for duplicates against
@@ -93,9 +99,7 @@ class BaseProcessor(ABC):
                 import_data["duplicated"] = import_data.apply(
                     lambda row: is_duplicated(
                         session=session,
-                        landslide_date=row[column_map["date"]].date()
-                        if hasattr(row[column_map["date"]], "date")
-                        else row[column_map["date"]],
+                        landslide_datetime=row[column_map["datetime"]],
                         landslide_geom=row["geom_wkt"],
                     ),
                     axis=1,
@@ -122,14 +126,16 @@ class BaseProcessor(ABC):
             # must be a list of dicts for the insert statement
             landslide_records = import_data.apply(
                 lambda row: {
-                    "date": row[column_map["date"]].date()
-                    if hasattr(row[column_map["date"]], "date")
-                    else row[column_map["date"]],
-                    # all nullable
+                    "datetime": row[column_map["datetime"]],
+                    # nullable
                     "report": row.get(column_map.get("report")),
                     "report_source": row.get(column_map.get("report_source")),
                     "report_url": row.get(column_map.get("report_url")),
-                    "geom": row["geom_wkt"],
+                    # not nullable
+                    "original_classification": row[
+                        column_map["original_classification"]
+                    ],
+                    "geometry": row["geom_wkt"],
                     "classification_id": classification_map.get(
                         row.get(column_map.get("classification"))
                     ),
@@ -138,10 +144,8 @@ class BaseProcessor(ABC):
                 axis=1,
             ).tolist()
 
-            stmt = insert(Landslides).values(landslide_records)
-
             try:
-                session.execute(stmt)
+                session.execute(insert(Landslides), landslide_records)
                 session.commit()
                 print(
                     f"Successfully imported {len(landslide_records)} "

@@ -29,9 +29,10 @@ class LandKaernten(BaseProcessor):
                 f"Not all geometries in data set {self.dataset_name} given"
             )
 
+        # has localized timezone info (strip that)
         self.data["validFrom"] = pd.to_datetime(
             self.data["validFrom"], errors="coerce"
-        ).dt.date
+        ).dt.tz_localize(None)
         # remove hidden missing classifications
         self.data = self.data[self.data["QualitativeValue"] != "keine Angabe"]
 
@@ -44,7 +45,8 @@ class LandKaernten(BaseProcessor):
 
         # remove duplicates with same date and exact same geometry
         self.data = self.data.drop_duplicates(
-            subset=["validFrom", "geometry"], keep="last"
+            subset=["validFrom", "geometry", "QualitativeValue"],
+            keep="last",
         )
 
     def classify(self):
@@ -132,9 +134,9 @@ class LandKaernten(BaseProcessor):
         """Import the data into a PostGIS database."""
         column_map = {
             "classification": "classification",
-            "date": "validFrom",
+            "datetime": "validFrom",
             # import original hazard labels
-            "report": "QualitativeValue",
+            "original_classification": "QualitativeValue",
         }
         self._import_to_db(
             data_to_import=self.data,
