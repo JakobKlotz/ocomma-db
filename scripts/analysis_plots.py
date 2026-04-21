@@ -16,7 +16,7 @@ PLOTS_DIR.mkdir(exist_ok=True)
 Session = create_db_session()
 with Session() as session:
     landslide_view = gpd.read_postgis(
-        "SELECT * FROM landslides_view", session.bind, geom_col="geom"
+        "SELECT * FROM landslides_view", session.bind, geom_col="geometry"
     )
 
 # Plotting the landslide data
@@ -40,8 +40,7 @@ fig.savefig(PLOTS_DIR / "classification-map.png", dpi=150, bbox_inches="tight")
 
 # Plot the number of events by year
 fig, ax = plt.subplots(figsize=(10, 6))
-landslide_view["event_date"] = gpd.pd.to_datetime(landslide_view["date"])
-landslide_view["event_year"] = landslide_view["event_date"].dt.year
+landslide_view["event_year"] = landslide_view["datetime"].dt.year
 
 year_counts = landslide_view["event_year"].value_counts().sort_index()
 year_counts = year_counts[year_counts.index >= 1900]

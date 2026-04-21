@@ -12,7 +12,7 @@ class GeoSphere(BaseProcessor):
     """GeoSphere Austria data."""
 
     def __init__(self, *, file_path: str | Path):
-        super().__init__(file_path=file_path, dataset_name="GeoSphere")
+        super().__init__(file_path=file_path, dataset_name="GeoSphere Austria")
 
     def _check_geom(self):
         """Check if geometries are given."""
@@ -22,26 +22,29 @@ class GeoSphere(BaseProcessor):
     def subset(self):
         """Subset the data to only include necessary columns."""
         necessary_columns = [
-            "inspireId_localId",
             "validFrom",
-            "description",
+            "processGroupWeb_EN",
+            "processGroupWeb_DE",
             "geometry",
         ]
         # all other columns have no real meaning, often unpopulated or
         # a constant
         self.data = self.data[necessary_columns]
+
         # description is a classification
         # (rockfall, gravity slide or flow, ...)
-        self.data = self.data.rename(columns={"description": "classification"})
+        self.data = self.data.rename(
+            columns={"processGroupWeb_EN": "classification"}
+        )
 
     def clean(self):
         """Clean the data."""
         # validFrom to date (coerce - historical dates are in there)
         self.data["validFrom"] = pd.to_datetime(
             self.data["validFrom"], errors="coerce"
-        )
-        # Remove all entries with no date
-        self.data = self.data[~self.data["validFrom"].isna()]
+        ).dt.tz_localize(None)
+        # Remove all entries with no date and no classification
+        self.data = self.data.dropna(subset=["validFrom", "classification"])
 
         self.data = self.data.sort_values(by="validFrom", ascending=False)
         # remove all *obvious* duplicates, keep most recent entry
@@ -108,7 +111,7 @@ class GeoSphere(BaseProcessor):
             # report fields are None (no appropriate field)
             # generally, from each source the original classifications are
             # preserved
-            "original_classification": "classification",
+            "original_classification": "processGroupWeb_DE",
         }
         self._import_to_db(
             data_to_import=data_to_import,

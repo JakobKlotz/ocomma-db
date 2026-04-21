@@ -15,6 +15,15 @@ class Nasa(BaseProcessor):
         """Subset and clean the data"""
         # Date must be given
         self.data = self.data[~self.data["event_date"].isna()]
+        # Append the given event_times
+        self.data["event_time"] = self.data["event_time"].replace(
+            "unknown", None
+        )
+        self.data["event_time"] = self.data["event_time"].fillna("00:00")
+        self.data["event_date"] = pd.to_datetime(
+            self.data["event_date"].astype(str) + " " + self.data["event_time"]
+        )
+
         # Remove newlines
         self.data["event_desc"] = self.data["event_desc"].str.replace(
             "\n", " "
@@ -30,9 +39,16 @@ class Nasa(BaseProcessor):
             "geometry",
         ]
         self.data = self.data[columns_to_keep]
-        # form a single string
-        self.data["original_classification"] = (
-            self.data["landslide_"] + " | Trigger: " + self.data["landslide1"]
+
+        # Some type of classification must be given
+        self.data = self.data.dropna(subset=["landslide_"])
+
+        # Form a single string (prevent resulting None, if landslide1 is not
+        # given)
+        self.data["original_classification"] = self.data[
+            "landslide_"
+        ] + self.data["landslide1"].apply(
+            lambda x: f" | Trigger: {x}" if pd.notna(x) else ""
         )
 
         # Map categories; GeoSphere classifications are used as basis:
