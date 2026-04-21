@@ -47,23 +47,24 @@ class WLV(BaseProcessor):
 
         return data
 
-    def _filter_debris_flows(self, data: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-        """Get all debris flows within the Water ('Wasser') category."""
-        water = data[data["category"] == "Wasser"].copy()
+    def _filter_sediment_transport_events(
+        self, data: gpd.GeoDataFrame
+    ) -> gpd.GeoDataFrame:
+        """Get all sediment transports within the Water ('Wasser') category."""
+        sediment_transport = data[data["category"] == "Wasser"].copy()
 
-        # filter by subcategories Murgang & Murartiger Feststofftransport
         # Example value for nameOfEvent:
         # "Wasser: Murgang - Intensität: extrem"  # noqa: ERA001
         sub = (
-            water["nameOfEvent"]
+            sediment_transport["nameOfEvent"]
             .str.partition("-")[0]
             .str.partition(":")[2]
             .str.strip()
         )
-        water = water.assign(subcategory=sub)
+        sediment_transport = sediment_transport.assign(subcategory=sub)
 
         unexpected_water_subcategories = set(
-            water["subcategory"].unique()
+            sediment_transport["subcategory"].unique()
         ).difference(self.EXPECTED_WATER_SUBCATEGORIES)
 
         if unexpected_water_subcategories:
@@ -72,12 +73,28 @@ class WLV(BaseProcessor):
                 f"{unexpected_water_subcategories}"
             )
 
-        # Filter by Murgang & Murartiger Feststofftransport
-        return water[
-            water["subcategory"].isin(
-                ("Murgang", "Murartiger Feststofftransport")
+        # Filter by Murgang, Murartiger Feststofftransport &
+        # Fluviatiler Feststofftransport
+        sediment_transport = sediment_transport[
+            sediment_transport["subcategory"].isin(
+                (
+                    "Murgang",
+                    "Murartiger Feststofftransport",
+                    "Fluviatiler Feststofftransport",
+                )
             )
         ]
+
+        # Map GeoSphere classifications
+        sediment_transport["classification"] = sediment_transport[
+            "subcategory"
+        ].map(
+            {
+                "Murgang": "gravity slide or flow",
+                "Murartiger Feststofftransport": "gravity slide or flow",
+                "Fluviatiler Feststofftransport": "mass movement (undefined type)",  # noqa: E501
+            }
+        )
 
     def clean(self):
         """Subset and clean the data."""
@@ -93,24 +110,31 @@ class WLV(BaseProcessor):
         # Get WLV categories
         data = self._build_categories(data)
 
-        # Get all debris flows
-        debris_flows = self._filter_debris_flows(data)
+        # Get all sediment transports
+        sediment_transports = self._filter_sediment_transport_events(data)
 
         # Keep slides and rockfalls
-        data = data[data["category"].isin(("Rutschung", "Steinschlag"))]
-
-        # Append debris flows
-        data = pd.concat([data, debris_flows], axis=0, ignore_index=True)
-
+        slides_rockfalls = data[
+            data["category"].isin(("Rutschung", "Steinschlag"))
+        ]
         # Map them to the GeoSphere classifications
-        data["classification"] = data["category"].replace(
+        slides_rockfalls["classification"] = slides_rockfalls["category"].map(
             {
                 "Rutschung": "gravity slide or flow",
                 "Steinschlag": "rockfall",
-                # 'Wasser' has only the subcategories
-                # Murgang & Murartiger Feststofftransport remaining
-                "Wasser": "gravity slide or flow",
-            }
+            },
+        )
+
+        # Check each entry as a GeoSphere classification assigned
+        if slides_rockfalls["classification"].isna().any():
+            unmapped = slides_rockfalls.loc[
+                slides_rockfalls["classification"].isna(), "category"
+            ].unique()
+            raise ValueError(f"Unmapped categories: {unmapped}")
+
+        # Concat slides, rockfalls and sediment transports
+        data = pd.concat(
+            [slides_rockfalls, sediment_transports], axis=0, ignore_index=True
         )
 
         # Subset & assign as attribute
