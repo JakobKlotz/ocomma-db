@@ -96,6 +96,22 @@ class WLV(BaseProcessor):
             }
         )
 
+    def _filter_slides_rockfall_events(
+        self, data: gpd.GeoDataFrame
+    ) -> gpd.GeoDataFrame:
+        # Keep slides and rockfalls
+        slides_rockfalls = data[
+            data["category"].isin(("Rutschung", "Steinschlag"))
+        ].copy()
+
+        # Map them to the GeoSphere classifications
+        slides_rockfalls["classification"] = slides_rockfalls["category"].map(
+            {
+                "Rutschung": "gravity slide or flow",
+                "Steinschlag": "rockfall",
+            },
+        )
+
     def clean(self):
         """Subset and clean the data."""
         # Work on a local copy
@@ -113,26 +129,17 @@ class WLV(BaseProcessor):
         # Get all sediment transports
         sediment_transports = self._filter_sediment_transport_events(data)
 
-        # Keep slides and rockfalls
-        slides_rockfalls = data[
-            data["category"].isin(("Rutschung", "Steinschlag"))
-        ]
-        # Map them to the GeoSphere classifications
-        slides_rockfalls["classification"] = slides_rockfalls["category"].map(
-            {
-                "Rutschung": "gravity slide or flow",
-                "Steinschlag": "rockfall",
-            },
-        )
+        # Get all landslides and rockfalls
+        slides_rockfalls = self._filter_slides_rockfall_events(data)
 
-        # Check each entry as a GeoSphere classification assigned
+        # Check if each entry as a GeoSphere classification assigned
         if slides_rockfalls["classification"].isna().any():
             unmapped = slides_rockfalls.loc[
                 slides_rockfalls["classification"].isna(), "category"
             ].unique()
             raise ValueError(f"Unmapped categories: {unmapped}")
 
-        # Concat slides, rockfalls and sediment transports
+        # Concat landslides, rockfalls and sediment transports
         data = pd.concat(
             [slides_rockfalls, sediment_transports], axis=0, ignore_index=True
         )
