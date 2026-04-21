@@ -1,3 +1,27 @@
+## Version `0.2.1`
+
+### 🌟 Features
+
+- Import *Fluviatiler Feststofftransport* records from the WLV data set.
+- Import timestamps for NASA COOLR records where available.
+- Updated GeoSphere Austria data to the latest version.
+- Increased the duplicate detection search radius from 500 m to 2000 m,
+  aligned with GeoSphere Austria's maximum positional uncertainty.
+
+### 🐞 Fixes
+
+- Prevent unindented missing values in `original_classification` for NASA
+  records.
+- Fixed `KeyError` in `analysis_plots.py` due to renamed columns (`datetime`
+  and `geometry`).
+
+### 📄 Documentation
+
+- Rewrote the About page: improved flow, expanded the Limitations section,
+  and clarified the rationale for the 2000 m duplicate detection radius.
+- Updated the Configuration guide to reflect the new default radius and added
+  a note explaining the choice.
+
 ## Version: `0.2.0`
 
 ### 🌟 Features
