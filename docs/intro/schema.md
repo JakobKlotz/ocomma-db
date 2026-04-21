@@ -27,15 +27,10 @@ To work with the data base, it helps to understand its public schema. The
 
 ### alembic_version
 
-Migration of the data base is done with the Python package 
-[`alembic`](https://alembic.sqlalchemy.org/en/latest/). "Alembic provides 
-for the creation, management, and invocation of change management scripts for a
-relational database, using SQLAlchemy as the underlying engine."[^1]
-
-[^1]: See the Alembic [tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html#tutorial)
-
-The alembic_version table is automatically added by the tool, it serves as 
-information.
+Migration of the data base is managed with
+[`alembic`](https://alembic.sqlalchemy.org/en/latest/), a database migration
+tool built on top of SQLAlchemy. The `alembic_version` table is automatically
+added by the tool and serves as information.
 
 ::: info
 

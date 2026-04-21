@@ -1,7 +1,4 @@
 {
-  "dependencies": {
-    "markdown-it-footnote": "^4.0.0"
-  },
   "devDependencies": {
     "vitepress": "^1.6.4"
   },
