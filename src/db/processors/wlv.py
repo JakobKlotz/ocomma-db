@@ -96,6 +96,8 @@ class WLV(BaseProcessor):
             }
         )
 
+        return sediment_transport
+
     def _filter_slides_rockfall_events(
         self, data: gpd.GeoDataFrame
     ) -> gpd.GeoDataFrame:
@@ -111,6 +113,8 @@ class WLV(BaseProcessor):
                 "Steinschlag": "rockfall",
             },
         )
+
+        return slides_rockfalls
 
     def clean(self):
         """Subset and clean the data."""
