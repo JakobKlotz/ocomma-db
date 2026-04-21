@@ -4,74 +4,52 @@ outline: deep
 
 # About
 
-This project builds a reproducible, harmonized inventory for mass movement data
-in Austria. By curating multiple open data sets, a single PostGIS data base is
-provided.
+Austria has various inventories on mass movements, but they are often maintained
+in different formats and silos across institutes and regional authorities.
+This fragmentation makes large-scale analysis difficult.
+
+This project addresses that by providing a single, harmonized and reproducible
+PostGIS database of mass movement events in Austria, built from multiple open
+data sets and designed as a research-oriented tool.
 
 ::: warning
 
-This project is under active development. The data base schema and its records
+This project is under active development. The database schema and its records
 are subject to change.
 
 :::
 
-## Project Goal
+## Limitations
 
-Austria has various data sets on mass movements, but they are often maintained
-in different formats and silos by various institutes and regional authorities.
-This fragmentation makes comprehensive, large-scale analysis difficult.
+The database is a best-effort aggregation of open data sets. Be aware of
+the following limitations before using it.
 
-This project aims to solve that problem by providing a single, harmonized and 
-reproducible data base of mass movement events in Austria, specifically for 
-the research community.
+::: danger
 
-## Scope & Limitations
-
-This data set is a research-oriented tool. It is designed to support 
-exploratory analysis, statistical modeling and the development of new methods.
-
-### What to Expect
-
-- **Harmonized data:** Historic mass movement events aggregated from multiple 
-  public sources.
-- **Attributes:** Records include event date, harmonized event classifications
-  and point geometry. Where available, metadata is provided.
-- **Duplicate handling**: To reduce redundancy across sources, an automated 
-  process identifies potential duplicates using a 500-meter radius and same-day
-  event date.
-- **Provenance:** Each record links back to its original source, ensuring 
-  traceability and proper attribution.
-- **Two data formats:** The data is provided as a ready-to-use GeoPackage for 
-  quick exploration and a PostGIS data base for reproducible ingestion and 
-  advanced workflows.
-- **Quick Start:** This project serves as a practical resource for researchers
-  who need a consolidated data set for analysis, modeling or method testing.
-- **Transparency:** Due to the open-source nature of the project, code for data
-  ingestion, harmonization and de-duplication is comprehensible and documented 
-  which enables inspection, reproducibility and reuse.
-
-### Important Limitations
-
-- **Not comprehensive:** Events can be missing! This inventory is a best-effort
-  aggregation of known public data sources and most likely will never be 
-  exhaustive. 
-- **Not error-free:** This inventory inherits all inconsistencies, inaccuracies
-  and omissions from its sources. Be aware, that data quality can verify.
-- **Positional uncertainty:** Point geometries can be imprecise. Positional 
-  uncertainty is generally not reported by the sources and can not be reliably 
-  estimated. Where reported, imprecision can range significantly, GeoSphere 
-  Austria, for example, documents a positional uncertainty of 50–2000 m.
-  In general, do not use this database for high-accuracy applications.
-- **Imperfect duplicate detection:** The automated check helps reduce 
-  redundancy but is not exhaustive. Some duplicates may remain, especially 
-  considering imprecision regarding point geometries.
+- **Not comprehensive:** Events can be missing. This inventory is an 
+  aggregation of known public data sources and will never be exhaustive.
+- **Not error-free:** This database inherits all inconsistencies, inaccuracies
+  and omissions from its sources. Data quality can vary.
+  - **Temporal uncertainty:** Every record carries a timestamp, but most sources
+    only report the event date, in those cases the time is set to midnight.
+    Temporal uncertainty is generally not reported by the sources. Hence, treat
+    all timestamps as approximate and account for this uncertainty in any 
+    time-sensitive analysis.
+  - **Positional uncertainty:** Most records have no positional uncertainty
+    reported at all. GeoSphere Austria, the primary base data set, is an
+    exception and documents an uncertainty of 50–2000 m.
+- **Imperfect duplicate detection:** Duplicates are identified using a 2 km
+  spatial radius and same-day event date (ignoring the timestamp). The radius 
+  is driven by GeoSphere Austria's maximum positional uncertainty. Considering 
+  the temporal and spatial uncertainty, duplicates may remain.
 - **Not for real-time use:** Updates depend on upstream sources. Data refreshes
-  are irregular and not guaranteed, new event data can lag or be incomplete.
-  Check the source metadata for recency.
+  are irregular and not guaranteed; new event data can lag or be incomplete.
+
+:::
 
 ## Data Coverage
 
-The data base encompasses different mass movement phenomena, including:
+The database encompasses different mass movement phenomena, including:
 
 - Gravity slide or flow
 - Rockfall
@@ -81,14 +59,14 @@ The data base encompasses different mass movement phenomena, including:
 
 ## Getting Started
 
-### Quick Access (GeoPackage)
+### Quick Access
 
-For users who want to quickly explore the data without setting up a data base,
+For users who want to quickly explore the data without setting up a database,
 we provide a ready-to-use GeoPackage file. This is ideal for:
 
 - Quick data exploration and visualization
 - One-time analyses or prototyping
-- Users without data base management experience
+- Users without database management experience
 
 ::: tip
 
@@ -103,9 +81,9 @@ directory. Simply download and open it in your favorite GIS application.
 
 For a proper workflow with reproducible data pipelines, advanced querying and
 integration into existing infrastructure, we recommend deploying the full
-PostGIS data base using Docker.
+PostGIS database using Docker.
 
-To set up the data base, please refer to the
+To set up the database, please refer to the
 [Quick Start Guide](../guide/quick-start).
 
 ## Data Sources
@@ -114,7 +92,7 @@ The inventory incorporates data from the following sources:
 
 | Source Name                                                                                                                             |                                                                      License                                                                       | Last Updated |
 |-----------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|
-| [GeoSphere Austria](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              | 6 Feb 2025  |
+| [GeoSphere Austria](https://data.inspire.gv.at/d69f276f-24b4-4c16-aed7-349135921fa1)                                                            |                                             [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)                                              | 25 Nov 2025  |
 | [Global Fatal Landslides](https://www.arcgis.com/home/item.html?id=7c9397b261aa436ebfbc41396bd96d06)                                    |                       [Open Government License](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/)                        | 9 Sept 2019  |
 | [NASA COOLR](https://maps.nccs.nasa.gov/arcgis/apps/MapAndAppGallery/index.html?appid=574f26408683485799d02e857e5d9521)                 |                                                       Custom License (provided in the repo)                                                        |   unknown    |
 | [WLV](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | [No Limitations](https://geometadatensuche.inspire.gv.at/metadatensuche/inspire/ger/catalog.search#/metadata/ccca05aa-728d-4218-9f4c-81286c537527) | 19 Feb 2026  |
