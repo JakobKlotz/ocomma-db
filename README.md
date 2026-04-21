@@ -30,7 +30,8 @@ provide a PostGIS data base that can be easily setup using Docker.
 To get your own instance of the data base up and running, please follow the 
 setup instructions which use Docker for easy deployment.
 
-Please refer to the [**Quick Start Guide**](https://docs.geohub.at/quick-start.html).
+Please refer to the
+[**Quick Start Guide**](https://docs.geohub.at/guide/quick-start.html).
 
 ## Help
 
@@ -74,3 +75,11 @@ types of mass-movement phenomena. Types present are:
 Contributions are always welcome! 😊
 Please refer to the [**Contribution Guidelines**](./CONTRIBUTING.md) for more
 details on how to setup your development environment.
+
+## Financial Support
+
+This work has been funded by *Land Tirol*.
+
+Project: *DigiSchutz*
+
+<img src="./docs/public/land-tirol.png" width="100px">

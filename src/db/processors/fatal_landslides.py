@@ -28,8 +28,13 @@ class GlobalFatalLandslides(BaseProcessor):
                 "Report_1",
                 "Source_1",
                 "geometry",
+                "Trigger",
             ]
         ]
+        # Combination represents the original classification, to be imported
+        self.data["original_classification"] = (
+            self.data["Report_1"] + " | Trigger: " + self.data["Trigger"]
+        )
         self.data = self.data.sort_values("Date").reset_index(drop=True)
 
     def clean(self):
@@ -88,10 +93,12 @@ class GlobalFatalLandslides(BaseProcessor):
         """Import to PostGIS database."""
         column_map = {
             "classification": "classification",
-            "date": "date",
+            "datetime": "date",
             "description": "description",
             "report": "Report_1",
             "report_url": "Source_1",
+            # original classification is part of `Report_1` and `Trigger`
+            "original_classification": "original_classification",
         }
         self._import_to_db(
             data_to_import=self.data,

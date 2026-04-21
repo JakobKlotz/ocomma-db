@@ -49,7 +49,7 @@ op.execute("DROP EXTENSION postgis")
 ... these two extension also come pre-initialized with the image. Since both of
 them are not used, they are dropped alongside their respective schemas.
 
-Add these lines to the first `alembic` revision in `downgrade()`:
+Add these lines to the first `alembic` revision in `upgrade()`:
 
 ```python
 op.execute("""

@@ -15,6 +15,15 @@ class Nasa(BaseProcessor):
         """Subset and clean the data"""
         # Date must be given
         self.data = self.data[~self.data["event_date"].isna()]
+        # Append the given event_times
+        self.data["event_time"] = self.data["event_time"].replace(
+            "unknown", None
+        )
+        self.data["event_time"] = self.data["event_time"].fillna("00:00")
+        self.data["event_date"] = pd.to_datetime(
+            self.data["event_date"].astype(str) + " " + self.data["event_time"]
+        )
+
         # Remove newlines
         self.data["event_desc"] = self.data["event_desc"].str.replace(
             "\n", " "
@@ -25,10 +34,22 @@ class Nasa(BaseProcessor):
             "source_lin",  # also to comply with the license
             "source_nam",  # comply with the license
             "event_date",
-            "landslide_",
+            "landslide_",  # original classification
+            "landslide1",  # trigger info
             "geometry",
         ]
         self.data = self.data[columns_to_keep]
+
+        # Some type of classification must be given
+        self.data = self.data.dropna(subset=["landslide_"])
+
+        # Form a single string (prevent resulting None, if landslide1 is not
+        # given)
+        self.data["original_classification"] = self.data[
+            "landslide_"
+        ] + self.data["landslide1"].apply(
+            lambda x: f" | Trigger: {x}" if pd.notna(x) else ""
+        )
 
         # Map categories; GeoSphere classifications are used as basis:
         # ['gravity slide or flow' 'mass movement (undefined type)' 'rockfall'
@@ -58,20 +79,18 @@ class Nasa(BaseProcessor):
 
         # Remove all events with no classification
         self.data = self.data[~self.data["classification"].isna()]
-        # convert datetime64[ns] -> python date objects
-        self.data["event_date"] = pd.to_datetime(
-            self.data["event_date"]
-        ).dt.date
+        self.data["event_date"] = pd.to_datetime(self.data["event_date"])
 
     def import_to_db(self, file_dump: str | None = None):
         """Import to PostGIS database."""
         column_map = {
             "classification": "classification",
-            "date": "event_date",
+            "datetime": "event_date",
             "description": "description",
             "report": "event_desc",
             "report_source": "source_nam",
             "report_url": "source_lin",
+            "original_classification": "original_classification",
         }
         self._import_to_db(
             data_to_import=self.data,

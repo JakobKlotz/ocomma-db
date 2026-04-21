@@ -1,3 +1,65 @@
+## Version `0.2.1`
+
+### 🌟 Features
+
+- Import *Fluviatiler Feststofftransport* records from the WLV data set.
+- Import timestamps for NASA COOLR records where available.
+- Updated GeoSphere Austria data to the latest version.
+- Increased the duplicate detection search radius from 500 m to 2000 m,
+  aligned with GeoSphere Austria's maximum positional uncertainty.
+
+### 🐞 Fixes
+
+- Prevent unindented missing values in `original_classification` for NASA
+  records.
+- Fixed `KeyError` in `analysis_plots.py` due to renamed columns (`datetime`
+  and `geometry`).
+
+### 📄 Documentation
+
+- Rewrote the About page: improved flow, expanded the Limitations section,
+  and clarified the rationale for the 2000 m duplicate detection radius.
+- Updated the Configuration guide to reflect the new default radius and added
+  a note explaining the choice.
+
+## Version: `0.2.0`
+
+### 🌟 Features
+
+- Preserve original classification: The raw source classification label
+    is now retained in a dedicated `original_classification` field alongside
+    the harmonized classification.
+- Refreshed the WLV data
+
+### ❌ Breaking changes
+
+- **Renamed `Landslides.date` to `Landslides.datetime`:** Column type
+    changed from `DATE` to `DATETIME`. Update existing queries accordingly.
+- **Renamed `Landslides.geom` to `Landslides.geometry`** Update existing
+    queries accordingly.
+
+### 📄 Documentation
+
+- GeoSphere Austria positional uncertainty (50–2000 m) documented in the
+    About page limitations.
+- Timestamps are assumed to be Austrian local time (CET/CEST); documented
+    in the schema column overview.
+
+## Version: `0.1.5`
+
+### 🌟 Features
+
+- Plotting script to generate overview plots of the events (e.g., map,
+    events per year and ratio of classifications)
+- Within the documentation the most recent modification for each data source is
+    given, for easier assessment of data recency.
+
+### 🛠 Dev changes
+
+- Updated `alembic` (encountered an issue with the `script_location` from 
+    `alembic.ini`)
+- Added a `Version` table to save the package version used to import the data
+
 ## Version: `0.1.4`
 
 ### 🌟 Features
