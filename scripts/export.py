@@ -7,7 +7,7 @@ from db.utils import create_db_session
 
 out_path = Path("./db-dump")
 out_path.mkdir(parents=True, exist_ok=True)
-out_file = out_path / "landslides-db.gpkg"
+out_file = out_path / "ocomma-db.gpkg"
 
 # always remove file (overwriting a GeoPackage leads to issues!)
 out_file.unlink(missing_ok=True)
