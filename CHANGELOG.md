@@ -1,3 +1,15 @@
+## Version `0.2.2`
+
+### 🛠 Dev changes
+
+- Renamed the repository from `landslides-db` to `ocomma-db` to better
+  reflect the project's scope, which extends beyond landslides to all
+  mass-movement phenomena.
+  - Updated the Python package name in `pyproject.toml`.
+  - Updated GitHub links in the documentation.
+  - Renamed the GeoPackage dump file from `landslides-db.gpkg` to
+    `ocomma-db.gpkg`.
+
 ## Version `0.2.1`
 
 ### 🌟 Features
