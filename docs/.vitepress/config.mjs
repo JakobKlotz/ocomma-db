@@ -41,7 +41,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/JakobKlotz/landslides-db' }
+      { icon: 'github', link: 'https://github.com/JakobKlotz/ocomma-db' }
     ],
 
     footer: {
