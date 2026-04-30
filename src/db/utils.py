@@ -90,7 +90,7 @@ def create_source_from_metadata(metadata: Dict[str, Any]) -> Sources:
 
 def import_version() -> None:
     """Add the current package version to a dedicated table."""
-    __version__ = version("landslides-db")
+    __version__ = version("ocomma-db")
 
     Session = create_db_session()  # noqa: N806
     with Session() as session:

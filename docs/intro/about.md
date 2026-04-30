@@ -72,7 +72,7 @@ we provide a ready-to-use GeoPackage file. This is ideal for:
 
 The GeoPackage dump contains a single table with all events and is located in
 the repository's
-[`db-dump/`](https://github.com/JakobKlotz/landslides-db/tree/main/db-dump)
+[`db-dump/`](https://github.com/JakobKlotz/ocomma-db/tree/main/db-dump)
 directory. Simply download and open it in your favorite GIS application.
 
 :::
