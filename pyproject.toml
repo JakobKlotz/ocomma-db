@@ -1,6 +1,6 @@
 [project]
-name = "landslides-db"
-version = "0.2.1"
+name = "ocomma-db"
+version = "0.2.2"
 description = "Open Collection of Mass Movements in Austria"
 readme = "README.md"
 authors = [
